@@ -28,6 +28,11 @@ inputs:
     description: 'Value to prefix before regex result in commit status value'
     required: false
     default:
+  debug:
+    description: 'Display debug logs during Flow Execution'
+    required: false
+    default: false
+    type: boolean
 runs:
     using: "composite"
     steps:
@@ -47,6 +52,7 @@ runs:
         uses: nimba-actions/run-flow@v1
         with:
           org-name: '${{ inputs.org-name }}'
+          debug: '${{ inputs.debug }}'
           flow-name: '${{ inputs.flow-name }}'
       - name: Set Commit Status
         if: ${{ inputs.commit-status-regex && inputs.commit-status-name }}

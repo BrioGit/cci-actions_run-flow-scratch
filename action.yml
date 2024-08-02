@@ -49,7 +49,7 @@ runs:
           org-name: dev-hub
           dev-hub: true
       - name: Run Flow
-        uses: nimba-actions/run-flow@v1
+        uses: nimba-actions/run-flow@v1.0.1
         with:
           org-name: '${{ inputs.org-name }}'
           debug: '${{ inputs.debug }}'

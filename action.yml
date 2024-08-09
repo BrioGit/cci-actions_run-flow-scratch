@@ -16,6 +16,9 @@ inputs:
   flow-name:
     description: 'Name of the Cumulus flow to execute'
     required: true
+  flow-options:
+    description: 'Options for the Cumulus flow to include'
+    required: false
   commit-status-name:
     description: 'Name of an optional extra commit status to set from build results'
     required: false

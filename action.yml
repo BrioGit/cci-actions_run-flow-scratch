@@ -57,6 +57,7 @@ runs:
           org-name: '${{ inputs.org-name }}'
           debug: '${{ inputs.debug }}'
           flow-name: '${{ inputs.flow-name }}'
+          flow-options: '${{ inputs.flow-options }}'
       - name: Set Commit Status
         if: ${{ inputs.commit-status-regex && inputs.commit-status-name }}
         env:

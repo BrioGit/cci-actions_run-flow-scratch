@@ -52,7 +52,7 @@ runs:
           org-name: dev-hub
           dev-hub: true
       - name: Run Flow
-        uses: nimba-actions/run-flow@v1.0.2
+        uses: nimba-actions/run-flow@main
         with:
           org-name: '${{ inputs.org-name }}'
           debug: '${{ inputs.debug }}'

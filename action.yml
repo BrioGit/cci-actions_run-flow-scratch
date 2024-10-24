@@ -71,6 +71,11 @@ runs:
         echo "Using commit-status-regex: $COMMIT_STATUS_REGEX"
         STATUS=$(grep -oE "$COMMIT_STATUS_REGEX" cumulusci-flow.log | tail -1)
         echo "Extracted STATUS: '$STATUS'"
+        
+        # Remove the parentheses
+        STATUS=${STATUS:1:-1}
+        echo "Storing version_id in Commit Status: '$STATUS'"
+        
         if [ -z "$STATUS" ]; then
           echo "Error: Package version ID not found in cumulusci-flow.log"
           exit 1

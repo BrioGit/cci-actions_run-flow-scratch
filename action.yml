@@ -22,7 +22,7 @@ inputs:
   commit-status-name:
     description: 'Name of an optional extra commit status to set from build results'
     required: false
-    default: 
+    default:
   commit-status-regex:
     description: 'Regex to apply to flow log to locate commit status value'
     required: false
@@ -37,43 +37,54 @@ inputs:
     default: false
     type: boolean
 runs:
-    using: "composite"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set Up CumulusCI
-        uses: nimba-actions/setup-cumulus@v1
-        with:
-          cumulusci-version: '${{ inputs.cumulusci-version }}'
-          sfdx-version: '${{ inputs.sfdx-version }}'
-      - name: Authorize Dev Hub
-        uses: nimba-actions/authorize-org@v1
-        with:
-          auth-url: '${{ inputs.dev-hub-auth-url }}'
-          org-name: dev-hub
-          dev-hub: true
-      - name: Run Flow
-        uses: nimba-actions/run-flow@main
-        with:
-          org-name: '${{ inputs.org-name }}'
-          debug: '${{ inputs.debug }}'
-          flow-name: '${{ inputs.flow-name }}'
-          flow-options: '${{ inputs.flow-options }}'
-      - name: Set Commit Status
-        if: ${{ inputs.commit-status-regex && inputs.commit-status-name }}
-        env:
-          GITHUB_TOKEN: '${{ github.token }}'
-        run: |
-          STATUS=$(cat cumulusci-flow.log | grep -o '${{ inputs.commit-status-regex }}')
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            '/repos/${{ github.repository }}/statuses/${{ github.sha }}' \
-            -f state='success' \
-            -f description="${{ inputs.commit-status-description-prefix }}$STATUS" \
-            -f context='${{ inputs.commit-status-name }}'
-        shell: bash
-      - name: Delete Scratch Org
-        if: ${{ always() }}
-        run: |
-          cci org scratch_delete '${{ inputs.org-name }}'
-        shell: bash
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    - name: Set Up CumulusCI
+      uses: nimba-actions/setup-cumulus@v1
+      with:
+        cumulusci-version: '${{ inputs.cumulusci-version }}'
+        sfdx-version: '${{ inputs.sfdx-version }}'
+    - name: Authorize Dev Hub
+      uses: nimba-actions/authorize-org@v1
+      with:
+        auth-url: '${{ inputs.dev-hub-auth-url }}'
+        org-name: dev-hub
+        dev-hub: true
+    - name: Run Flow
+      uses: nimba-actions/run-flow@main
+      with:
+        org-name: '${{ inputs.org-name }}'
+        debug: '${{ inputs.debug }}'
+        flow-name: '${{ inputs.flow-name }}'
+        flow-options: '${{ inputs.flow-options }}'
+    - name: Set Commit Status
+      if: ${{ inputs.commit-status-regex && inputs.commit-status-name }}
+      env:
+        GITHUB_TOKEN: '${{ github.token }}'
+        COMMIT_STATUS_REGEX: '${{ inputs.commit-status-regex }}'
+        COMMIT_STATUS_DESCRIPTION_PREFIX: '${{ inputs.commit-status-description-prefix }}'
+        COMMIT_STATUS_NAME: '${{ inputs.commit-status-name }}'
+        GITHUB_REPOSITORY: '${{ github.repository }}'
+        GITHUB_SHA: '${{ github.sha }}'
+      run: |
+        echo "Using commit-status-regex: $COMMIT_STATUS_REGEX"
+        STATUS=$(grep -oE "$COMMIT_STATUS_REGEX" cumulusci-flow.log | tail -1)
+        echo "Extracted STATUS: '$STATUS'"
+        if [ -z "$STATUS" ]; then
+          echo "Error: Package version ID not found in cumulusci-flow.log"
+          exit 1
+        fi
+        gh api \
+          --method POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          "/repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+          -f state='success' \
+          -f description="$COMMIT_STATUS_DESCRIPTION_PREFIX$STATUS" \
+          -f context="$COMMIT_STATUS_NAME"
+      shell: bash
+    - name: Delete Scratch Org
+      if: ${{ always() }}
+      run: |
+        cci org scratch_delete '${{ inputs.org-name }}'
+      shell: bash

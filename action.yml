@@ -1,7 +1,7 @@
 name: Run Scratch Org Flow
 description: "Execute a named CumulusCI flow"
 inputs:
-  github-token:
+  cci-token:
     description: "Token for private repository access"
     required: false
   cumulusci-version:
@@ -57,7 +57,7 @@ runs:
     - name: Run Flow
       uses: nimba-actions/run-flow@main
       with:
-        github-token: "${{ inputs.github-token }}"
+        cci-token: "${{ inputs.cci-token }}"
         org-name: "${{ inputs.org-name }}"
         debug: "${{ inputs.debug }}"
         flow-name: "${{ inputs.flow-name }}"

@@ -49,7 +49,7 @@ runs:
         cumulusci-version: "${{ inputs.cumulusci-version }}"
         sfdx-version: "${{ inputs.sfdx-version }}"
     - name: Authorize Dev Hub
-      uses: nimba-actions/authorize-org@v1
+      uses: nimba-actions/authorize-org@main
       with:
         auth-url: "${{ inputs.dev-hub-auth-url }}"
         org-name: dev-hub

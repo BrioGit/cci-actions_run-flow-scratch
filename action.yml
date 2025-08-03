@@ -10,6 +10,9 @@ inputs:
   sfdx-version:
     description: "version of SFDX to install"
     required: false
+  py-version:
+    description: "version of Python to install"
+    required: false
   dev-hub-auth-url:
     description: "SFDX auth URL for the Dev Hub"
     required: true
@@ -44,10 +47,11 @@ runs:
   steps:
     - uses: actions/checkout@v3
     - name: Set Up CumulusCI
-      uses: nimba-actions/setup-cumulus@main
+      uses: BrioGit/cci-actions_setup-cumulus@upgrade-py-version
       with:
         cumulusci-version: "${{ inputs.cumulusci-version }}"
         sfdx-version: "${{ inputs.sfdx-version }}"
+        py-version: "${{ inputs.py-version }}"
     - name: Authorize Dev Hub
       uses: nimba-actions/authorize-org@main
       with:

@@ -47,7 +47,7 @@ runs:
   steps:
     - uses: actions/checkout@v3
     - name: Set Up CumulusCI
-      uses: BrioGit/cci-actions_setup-cumulus@upgrade-py-version
+      uses: BrioGit/cci-actions_setup-cumulus@feature/upgrade-py-version
       with:
         cumulusci-version: "${{ inputs.cumulusci-version }}"
         sfdx-version: "${{ inputs.sfdx-version }}"
